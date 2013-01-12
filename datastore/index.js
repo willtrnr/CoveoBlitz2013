@@ -81,6 +81,7 @@ module.exports = function(config) {
     console.log("Crawling");
     //Call the START command
     getJSON('/BlitzDataWebService/evaluationRun/start?runId=A', function(data) {
+      console.log(data);
       self.crawlArtistPage();
     });
   };
