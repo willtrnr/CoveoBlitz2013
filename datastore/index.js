@@ -173,6 +173,7 @@ module.exports = function(config) {
     }
   };
   this.search = function(query) {
+    var isAnd = true;
     var tokens = self.tokenize(query);
     var albums = [];
     var artists = [];
@@ -185,6 +186,21 @@ module.exports = function(config) {
         if (self.terms.artists[token])
           self.addDistinct(artists, self.terms.artists[token]);
       }
+    }
+
+    if (isAnd) {
+      var tmpAlbums = [];
+      for (var al in albums) {
+        if (self.docContainsAllTerms(albums[al], self.terms.albums, tokens))
+          tmpAlbums.push(albums[al]);
+      }
+      var tmpArtists = [];
+      for (var ar in artists) {
+        if (self.docContainsAllTerms(artists[ar], self.terms.artists, tokens))
+          tmpArtists.push(artists[ar]);
+      }
+      albums = tmpAlbums;
+      artists = tmpArtists;
     }
 
     var results = {
@@ -205,6 +221,14 @@ module.exports = function(config) {
     }
 
     return results;
+  };
+  this.docContainsAllTerms = function(id, terms, tokens) {
+    for (var i in tokens) {
+      var token = tokens[i];
+      if (!terms[token][id])
+        return false;
+    }
+    return true;
   };
   this.addDistinct = function(arr, add) {
     for (var a in add) {
