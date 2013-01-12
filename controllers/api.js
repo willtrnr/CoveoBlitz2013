@@ -4,6 +4,6 @@ module.exports = function(app, db, prefix) {
   });
 
   app.get(prefix + '/api/:id', function(req, res) {
-    res.json(db.documents[req.param('q')]);
+    res.json(db.documents[req.params.id]);
   });
 };
