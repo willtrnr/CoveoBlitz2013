@@ -234,10 +234,10 @@ module.exports = function(config) {
       results: []
     };
     for (var album in albums) {
-      results.results.push({id: albums[album]});
+      results.results.push({id: albums[album], type: "album"});
     }
     for (var artist in artists) {
-      results.results.push({id: artists[artist]});
+      results.results.push({id: artists[artist], type: "artiste"});
     }
 
     return results;
