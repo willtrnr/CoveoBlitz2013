@@ -8,6 +8,12 @@ $(document).ready(function() {
     if (!showingResults)
       $("#search-container").css('margin-top', $(window).height()/2 - $("#search-container").outerHeight()/2);
   });
+
+  $("#headline").hover(function() {
+    $(this).text('Dorémifasol');
+  }, function() {
+    $(this).text('Covemifasol');
+  });
 });
 
 //On fais la query quand le user tape une search
