@@ -1,36 +1,106 @@
-var rest  = require('restler');
+var Lateral = require('lateral');
+var http = require('http');
+http.globalAgent.maxSockets = 500;
 
-//Initialize the REST crawler
-CrawlerModel = rest.service(function() {}, {
-  baseURL: 'http://ec2-23-20-62-1.compute-1.amazonaws.com:8080/BlitzDataWebService',
-}, {
-  start: function() {
-    return this.get("/evaluationRun/start?runId=A")
-  },
-  stop: function() {
-    return this.get("/evaluationRun/stop");
-  }
-});
-
-var crawler = new CrawlerModel();
-
+function getJSON(url, callback) {
+  console.log("Getting " + url);
+  http.request({
+      hostname: 'ec2-23-20-62-1.compute-1.amazonaws.com',
+      port: 8080,
+      method: 'GET',
+      path: '/BlitzDataWebService' + url
+    }, function(res) {
+    var data = '';
+    res.on('data', function(chunk) {
+      data += chunk;
+    });
+    res.on('end', function() {
+      try {
+        if (callback) callback(JSON.parse(data));
+      } catch (ex) {
+        console.log(ex);
+        if (callback) callback({});
+      }
+    });
+  }).end('');
+}
 
 module.exports = function(config) {
   var self = this;
 
   this.config = config;
 
+  this.page = 0;
+
+  this.documents = {};
+  this.artists = {};
+  this.albums = {};
+
+  //this.facets = [];
+  this.tocrawl = [];
+
+  this.crawlPoolArtist = Lateral.create(function(complete, item, i) {
+    getJSON('/artists/' + item.id, function(data) {
+      self.documents[item.id] = data;
+      self.artists[item.id] = self.documents[item.id];
+      self.indexArtist(data);
+      /*
+      Object.keys(data).forEach(function(k) {
+        if (self.facets.indexOf(k) == -1) self.facets.push(k);
+      });
+      */
+      complete();
+    });
+  }, 50);
+
+  this.crawlPoolAlbum = Lateral.create(function(complete, item, i) {
+    getJSON('/albums/' + item.id, function(data) {
+      self.documents[item.id] = data;
+      self.albums[item.id] = self.documents[item.id];
+      self.indexAlbum(data);
+      /*
+      Object.keys(data).forEach(function(k) {
+        if (self.facets.indexOf(k) == -1) self.facets.push(k);
+      });
+      */
+      complete();
+    });
+  }, 50);
+
+  this.crawlAlbumPage = function() {
+    getJSON('/albums?size=100&page=' + self.page, function(data) {
+      self.page++;
+      self.crawlPoolAlbum.add(data.content).when(function() {
+        if (!data.lastPage) {
+          self.crawlAlbumPage();
+        } else {
+          getJSON('/evaluationRun/stop', console.log);
+          console.log(self.facets);
+        }
+      });
+    });
+  };
+
+  this.crawlArtistPage = function() {
+    getJSON('/artists?size=100&page=' + self.page, function(data) {
+      self.page++;
+      self.crawlPoolArtist.add(data.content).when(function() {
+        if (!data.lastPage) {
+          self.crawlArtistPage();
+        } else {
+          self.page = 0;
+          self.crawlAlbumPage();
+        }
+      });
+    });
+  };
+
   this.crawl = function() {
-    //On crawl ca staffaire la !!!
-    var documents;
-
-    var size = 100;
-    var page = 0;
-    var lastPage = false;
-
-    var artists;
-    var albums;
-    var documents;
+    //Call the START command
+    getJSON('/evaluationRun/start?runId=Run1test', function(data) {
+      console.log(data);
+      self.crawlArtistPage();
+    });
   };
 
   /*
@@ -61,40 +131,110 @@ module.exports = function(config) {
   };
 
   this.tokenize = function(str) {
-    return str.toLowerCase().split(/\W+/i);
+    str = str.toLowerCase();
+    var t = [];
+    var word = "";
+    for (var c in str) {
+      if ("0123456789abcdefghijklmnopqrstuvwxyzàáâãäåçèéêëìíîïðòóôõöùúûüýÿ-_".indexOf(str[c]) >= 0)
+        word += str[c];
+      else {
+        t.push(word);
+        word = "";
+      }
+    }
+    if (word.length) t.push(word);
+    return t;
   };
 
   this.indexArtist = function(artist) {
-    var value = this.getArtistString(artist);
-    var tokens = this.tokenize(value);
+    var value = self.getArtistString(artist);
+    var tokens = self.tokenize(value);
 
     for (var i in tokens) {
       var token = tokens[i];
         if (token) {
-        if (!this.terms.artists[token]) this.terms.artists[token] = {};
-        if (!this.terms.artists[token][artist.id]) this.terms.artists[token][artist.id] = 1;
-        else this.terms.artists[token][artist.id]++;
+        if (!self.terms.artists[token]) self.terms.artists[token] = {};
+        if (!self.terms.artists[token][artist.id]) self.terms.artists[token][artist.id] = 1;
+        else self.terms.artists[token][artist.id]++;
       }
     }
   };
   this.indexAlbum = function(album) {
-    var value = this.getAlbumString(album);
-    var tokens = this.tokenize(value);
+    var value = self.getAlbumString(album);
+    var tokens = self.tokenize(value);
 
     for (var i in tokens) {
       var token = tokens[i];
         if (token) {
-        if (!this.terms.albums[token]) this.terms.albums[token] = {};
-        if (!this.terms.albums[token][album.id]) this.terms.albums[token][album.id] = 1;
-        else this.terms.albums[token][album.id]++;
+        if (!self.terms.albums[token]) self.terms.albums[token] = {};
+        if (!self.terms.albums[token][album.id]) self.terms.albums[token][album.id] = 1;
+        else self.terms.albums[token][album.id]++;
       }
     }
   };
-  this.getArtistString = function(artist) {
-    return this.concatArraysIntoString([artist.name, artist.origin, artist.genres, artist.labels]) + ' ' + artist.text;
+  this.search = function(query) {
+    var tokens = self.tokenize(query);
+    var albums = [];
+    var artists = [];
+
+    for (var i in tokens) {
+      var token = tokens[i];
+      if (token) {
+        if (self.terms.albums[token])
+          self.addDistinct(albums, self.terms.albums[token]);
+        if (self.terms.artists[token])
+          self.addDistinct(artists, self.terms.artists[token]);
+      }
+    }
+
+    var results = {
+      facets: {
+        type: {
+          albums: albums.length,
+          artists: artists.length
+        }
+      },
+      results: []
+    };
+
+    for (var album in albums) {
+      results.results.push({id: albums[album]});
+    }
+    for (var artist in artists) {
+      results.results.push({id: artists[artist]});
+    }
+
+    return results;
   };
-  this.getAlbumsString = function(album) {
-    return this.concatArraysIntoString([album.name, album.track_names, album.release_date]);
+  this.addDistinct = function(arr, add) {
+    for (var a in add) {
+      if (arr.indexOf(a) < 0)
+        arr.push(a);
+    }
+  };
+  this.getArtistString = function(artist) {
+    return self.concatArraysIntoString(self.getFacetsValues(artist).concat([artist.name])) + ' ' + artist.text;
+  };
+  this.getAlbumString = function(album) {
+    return self.concatArraysIntoString(self.getFacetsValues(album).concat([album.name]));
+  };
+  this.getFacetsValues = function(obj) {
+    var facets = self.getFacets(obj);
+    var values = [];
+    for (var f in facets) {
+      values.push(obj[facets[f]]);
+    }
+    return values;
+  };
+  this.getFacets = function(obj) {
+    var facets = [];
+    var keys = Object.keys(obj);
+    for (var i in keys) {
+      var prop = keys[i];
+      if (prop !== "name" && prop !== "text" && prop !== "id")
+        facets.push(prop);
+    }
+    return facets;
   };
   this.concatArraysIntoString = function(arr) {
     var str = "";

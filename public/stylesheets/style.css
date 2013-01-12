@@ -1,0 +1,37 @@
+body {
+  background-image: url("../images/body-bg.png");
+  -webkit-font-smoothing: antialiased;
+  -moz-font-smoothing: antialiased;
+}
+
+::-webkit-input-placeholder  {
+  -webkit-font-smoothing: antialiased;
+  -moz-font-smoothing: antialiased;
+  line-height: 1.1em;
+}
+input:-moz-placeholder {
+  -webkit-font-smoothing: antialiased;
+  -moz-font-smoothing: antialiased;
+}
+
+
+
+#headline {
+  text-align: center;
+  font-size: 80px;
+  font-family: Helvetica, Arial;
+}
+
+#search-bar {
+  width: 820px;
+  height: 55px;
+  font-size: 30px;
+  padding: 5px 15px 5px 15px;
+  line-height: 1em;
+  margin: 70px auto;
+  display: block;
+}
+
+#results {
+  display: none;
+}
