@@ -107,7 +107,7 @@ module.exports = function(config) {
   this.crawl = function() {
     //Call the START command
     console.log("Start crawling!");
-    getJSON('/evaluationRun/start?runId=Run1test', function(data) {
+    getJSON('/evaluationRun/start?runId=' + self.config.runId, function(data) {
       self.crawlArtistPage();
       self.crawlAlbumPage();
     });
