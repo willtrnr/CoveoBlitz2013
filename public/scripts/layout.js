@@ -24,7 +24,7 @@ $("#search-bar").bind("input propertychange", function (evt) {
       $.get('/api', requestData, function(data, textStatus, jqXHR) {
         //Move that search bar
         showingResults = true;
-        $("#search-container").css('margin-top', $(window).height()/2 - $("#search-container").outerHeight()/2);
+        $("#search-container").css('margin-top', 50);
 
         var formattedArtists = [];
 

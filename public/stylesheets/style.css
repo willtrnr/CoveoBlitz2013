@@ -14,7 +14,9 @@ input:-moz-placeholder {
   -moz-font-smoothing: antialiased;
 }
 
-
+.container {
+  width: 900px;
+}
 
 #headline {
   text-align: center;
