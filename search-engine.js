@@ -1,6 +1,6 @@
 var SearchEngine = {
   tokenize: function(str) {
-    return str.split();
+    return str.split(/[A-Za-z/);
   }
 };
 
