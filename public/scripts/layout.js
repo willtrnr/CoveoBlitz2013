@@ -26,7 +26,13 @@ $("#search-bar").bind("input propertychange", function (evt) {
         showingResults = true;
 
         $("#search-container").animate({marginTop: 50}, 200 function() {
-          
+          var formattedArtists = [];
+
+          data.results.forEach(function(doc) {
+            formattedArtists.push('<div class="artist"><img src="http://ec2-23-20-62-1.compute-1.amazonaws.com:8080/BlitzDataWebService/images/' + doc.id + '" class="thumbnail"><div class="title"></div></div class="description"></div></div>');
+          });
+
+          $("#artists").html(formattedArtists.join(""));
         });
       });
     }, 300));
