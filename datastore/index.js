@@ -147,43 +147,43 @@ module.exports = function(config) {
   };
 
   this.indexArtist = function(artist) {
-    var value = this.getArtistString(artist);
-    var tokens = this.tokenize(value);
+    var value = self.getArtistString(artist);
+    var tokens = self.tokenize(value);
 
     for (var i in tokens) {
       var token = tokens[i];
         if (token) {
-        if (!this.terms.artists[token]) this.terms.artists[token] = {};
-        if (!this.terms.artists[token][artist.id]) this.terms.artists[token][artist.id] = 1;
-        else this.terms.artists[token][artist.id]++;
+        if (!self.terms.artists[token]) self.terms.artists[token] = {};
+        if (!self.terms.artists[token][artist.id]) self.terms.artists[token][artist.id] = 1;
+        else self.terms.artists[token][artist.id]++;
       }
     }
   };
   this.indexAlbum = function(album) {
-    var value = this.getAlbumString(album);
-    var tokens = this.tokenize(value);
+    var value = self.getAlbumString(album);
+    var tokens = self.tokenize(value);
 
     for (var i in tokens) {
       var token = tokens[i];
         if (token) {
-        if (!this.terms.albums[token]) this.terms.albums[token] = {};
-        if (!this.terms.albums[token][album.id]) this.terms.albums[token][album.id] = 1;
-        else this.terms.albums[token][album.id]++;
+        if (!self.terms.albums[token]) self.terms.albums[token] = {};
+        if (!self.terms.albums[token][album.id]) self.terms.albums[token][album.id] = 1;
+        else self.terms.albums[token][album.id]++;
       }
     }
   };
   this.search = function(query) {
-    var tokens = this.tokenize(query);
+    var tokens = self.tokenize(query);
     var albums = [];
     var artists = [];
 
     for (var i in tokens) {
       var token = tokens[i];
       if (token) {
-        if (this.terms.albums[token])
-          this.addDistinct(albums, this.terms.albums[token]);
-        if (this.terms.artists[token])
-          this.addDistinct(artists, this.terms.artists[token]);
+        if (self.terms.albums[token])
+          self.addDistinct(albums, self.terms.albums[token]);
+        if (self.terms.artists[token])
+          self.addDistinct(artists, self.terms.artists[token]);
       }
     }
 
@@ -213,13 +213,13 @@ module.exports = function(config) {
     }
   };
   this.getArtistString = function(artist) {
-    return this.concatArraysIntoString(this.getFacetsValues(artist).concat([artist.name])) + ' ' + artist.text;
+    return self.concatArraysIntoString(self.getFacetsValues(artist).concat([artist.name])) + ' ' + artist.text;
   };
   this.getAlbumString = function(album) {
-    return this.concatArraysIntoString(this.getFacetsValues(album).concat([album.name]));
+    return self.concatArraysIntoString(self.getFacetsValues(album).concat([album.name]));
   };
   this.getFacetsValues = function(obj) {
-    var facets = getFacets(obj);
+    var facets = self.getFacets(obj);
     var values = [];
     for (var f in facets) {
       values.push(obj[facets[f]]);
