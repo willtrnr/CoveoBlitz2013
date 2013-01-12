@@ -24,9 +24,9 @@
     "express": "3.0.x",
     "consolidate": "0.5.x",
     "ejs": "*",
-    "futures": "*",
     "Array.prototype.forEachAsync": "*",
-    "lateral": "*"
+    "lateral": "*",
+    "join": "*"
   },
   "devDependencies": {},
   "engines": {
