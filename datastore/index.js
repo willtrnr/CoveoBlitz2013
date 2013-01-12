@@ -21,9 +21,6 @@ module.exports = function(config) {
   this.config = config;
 
   this.crawl = function() {
-    //Call the START command
-    crawler.start();
-
     //On crawl ca staffaire la !!!
     var documents;
 
@@ -34,17 +31,6 @@ module.exports = function(config) {
     var artists;
     var albums;
     var documents;
-
-    while (!lastPage)
-    {
-      crawler.get("/artists?size=" + size + "&page=" + page, {parser: parsers.json}).on('complete', function(data) {
-        lastPage = data.lastPage;
-        console.dir(data);
-      });
-    }
-
-    //Call the STOP command
-    crawler.stop();
   };
 
   /*

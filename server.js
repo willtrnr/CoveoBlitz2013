@@ -5,15 +5,14 @@ var express  = require('express'),
     path     = require('path');
 
 var config   = require('./config');
-var db       = new require('./datastore')(config);
+var db       = new (require('./datastore'))(config);
 var app      = express();
 var sessions = new express.session.MemoryStore(); // Must change for cluster-safe
 
 app.configure(function() {
   // Templating
-  app.engine('jade', cons.jade);
   app.set('views', __dirname + '/views');
-  app.set('view engine', 'jade');
+  app.set('view engine', 'ejs');
   app.set('view options', { pretty: true });
   app.locals({
     title:     config.title  || '',
