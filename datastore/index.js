@@ -59,7 +59,7 @@ module.exports = function(config) {
   };
 
   this.tokenize = function(str) {
-    return str.split(/\W+/i);
+    return str.toLowerCase().split(/\W+/i);
   };
 
   this.indexArtist = function(artist) {
@@ -68,9 +68,11 @@ module.exports = function(config) {
 
     for (var i in tokens) {
       var token = tokens[i];
-      if (!this.terms.artists[token]) this.terms.artists[token] = {};
-      if (!this.terms.artists[token][artist.id]) this.terms.artists[token][artist.id] = 1;
-      else this.terms.artists[token][artist.id]++;
+        if (token) {
+        if (!this.terms.artists[token]) this.terms.artists[token] = {};
+        if (!this.terms.artists[token][artist.id]) this.terms.artists[token][artist.id] = 1;
+        else this.terms.artists[token][artist.id]++;
+      }
     }
   };
   this.getArtistString = function(artist) {
@@ -81,7 +83,7 @@ module.exports = function(config) {
     var str = "";
     for (var i in arr) {
       for (var j in arr[i]) {
-        str = str.concat(arr[i][j]);
+        str = str.concat(' ' + arr[i][j]);
       }
     }
     return str;
