@@ -68,11 +68,14 @@ h2 {
   overflow: auto;
   font-size: 16px;
   margin-top: 20px;
+  width: 400px;
+  min-height: 200px;
+  float: left;
 }
 
 .artist-info {
   float: left;
-  width: 570px;
+  width: 170px;
   margin-left: 15px;
   margin-top: 10px;
   font-size: 18px;
