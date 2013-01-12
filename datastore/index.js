@@ -80,7 +80,7 @@ module.exports = function(config) {
   this.crawl = function() {
     console.log("Crawling");
     //Call the START command
-    getJSON('/BlitzDataWebService/evaluationRun/start?runId=Peewee', function(data) {
+    getJSON('/BlitzDataWebService/evaluationRun/start?runId=Run1test', function(data) {
       console.log(data);
       self.crawlArtistPage();
     });
