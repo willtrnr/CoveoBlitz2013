@@ -113,7 +113,19 @@ module.exports = function(config) {
   };
 
   this.tokenize = function(str) {
-    return str.toLowerCase().split(/\W+/i);
+    str = str.toLowerCase();
+    var t = [];
+    var word = "";
+    for (var c in str) {
+      if ("0123456789abcdefghijklmnopqrstuvwxyzàáâãäåçèéêëìíîïðòóôõöùúûüýÿ-_".indexOf(str[c]) >= 0)
+        word += str[c];
+      else {
+        t.push(word);
+        word = "";
+      }
+    }
+    if (word.length) t.push(word);
+    return t;
   };
 
   this.indexArtist = function(artist) {
@@ -142,10 +154,36 @@ module.exports = function(config) {
       }
     }
   };
+  this.search = function(query) {
+    var tokens = this.tokenize(query);
+    var albums = [];
+    var artists = [];
+
+    for (var i in tokens) {
+      var token = tokens[i];
+      if (token) {
+        if (this.terms.albums[token])
+          this.addDistinct(albums, this.terms.albums[token]);
+        if (this.terms.artists[token])
+          this.addDistinct(artists, this.terms.artists[token]);
+      }
+    }
+
+    return {
+      albums: albums,
+      artists: artists
+    };
+  };
+  this.addDistinct = function(arr, add) {
+    for (var a in add) {
+      if (arr.indexOf(a) < 0)
+        arr.push(a);
+    }
+  };
   this.getArtistString = function(artist) {
     return this.concatArraysIntoString([artist.name, artist.origin, artist.genres, artist.labels]) + ' ' + artist.text;
   };
-  this.getAlbumsString = function(album) {
+  this.getAlbumString = function(album) {
     return this.concatArraysIntoString([album.name, album.track_names, album.release_date]);
   };
   this.concatArraysIntoString = function(arr) {
