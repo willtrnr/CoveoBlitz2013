@@ -5,7 +5,7 @@ var express  = require('express'),
     path     = require('path');
 
 var config   = require('./config');
-var db       = require('./models')(config);
+var db       = require('./datastore')(config);
 var app      = express();
 var sessions = new express.session.MemoryStore(); // Must change for cluster-safe
 
