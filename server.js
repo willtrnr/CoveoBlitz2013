@@ -46,8 +46,8 @@ app.configure('development', function() {
 // http://madhums.me/2012/07/19/breaking-down-app-js-file-nodejs-express-mongoose/
 require('./controllers')(app, db, config.prefix);
 
-http.createServer(app).listen(config.port || 3000, config.host || '0.0.0.0', function() {
-  console.log("Project " + config.title + " server listening on " + (config.host || '0.0.0.0') + ":" + (config.port || 3000));
+http.createServer(app).listen(config.port || 3000, config.listen || '0.0.0.0', function() {
+  console.log("Project " + config.title + " server listening on " + (config.listen || '0.0.0.0') + ":" + (config.port || 3000));
 });
 
 db.crawl();
