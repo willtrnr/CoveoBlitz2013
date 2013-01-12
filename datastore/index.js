@@ -233,6 +233,12 @@ module.exports = function(config) {
       },
       results: []
     };
+    for (var album in albums) {
+      results.results.push({id: albums[album]});
+    }
+    for (var artist in artists) {
+      results.results.push({id: artists[artist]});
+    }
 
     /*for (var alb in albums) {
       var facets = self.getFacets(self.documents[albums[alb]]);
