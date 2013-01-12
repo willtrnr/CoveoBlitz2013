@@ -6,5 +6,5 @@ module.exports = {
   host     : process.env.DOMAIN || 'localhost',
   listen   : '0.0.0.0',
   port     : process.env.PORT || (process.env.NODE_ENV == 'prodution') ? 80 : 3000,
-  runId    : 'Run1test'
+  runId    : 'Run3'
 };

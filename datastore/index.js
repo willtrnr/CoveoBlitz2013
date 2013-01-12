@@ -57,7 +57,7 @@ module.exports = function(config) {
       */
       complete();
     });
-  }, 250);
+  }, 200);
 
   this.crawlPoolAlbum = Lateral.create(function(complete, item, i) {
     getJSON('/albums/' + item.id, function(data) {
@@ -71,7 +71,7 @@ module.exports = function(config) {
       */
       complete();
     });
-  }, 250);
+  }, 200);
 
   this.doneCrawl = Join.create();
   this.doneArtists = this.doneCrawl.add();
