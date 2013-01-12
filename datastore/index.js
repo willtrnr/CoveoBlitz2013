@@ -75,7 +75,19 @@ module.exports = function(config) {
   };
 
   this.tokenize = function(str) {
-    return str.toLowerCase().split(/\W+/i);
+    str = str.toLowerCase();
+    var t = [];
+    var word = "";
+    for (var c in str) {
+      if ("0123456789abcdefghijklmnopqrstuvwxyzàáâãäåçèéêëìíîïðòóôõöùúûüýÿ-_".indexOf(str[c]) >= 0)
+        word += str[c];
+      else {
+        t.push(word);
+        word = "";
+      }
+    }
+    if (word.length) t.push(word);
+    return t;
   };
 
   this.indexArtist = function(artist) {
