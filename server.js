@@ -3,7 +3,6 @@ var express  = require('express'),
     cons     = require('consolidate'),
     http     = require('http'),
     path     = require('path');
-    restler  = require('restler');
 
 var config   = require('./config');
 var db       = new require('./datastore')(config);
