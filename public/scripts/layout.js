@@ -25,7 +25,7 @@ $("#search-bar").bind("input propertychange", function (evt) {
         //Move that search bar
         showingResults = true;
 
-        $("#search-container").animate({marginTop: 50}, 200 function() {
+        $("#search-container").animate({marginTop: 50}, 200, function() {
           var formattedArtists = [];
 
           data.results.forEach(function(doc) {
