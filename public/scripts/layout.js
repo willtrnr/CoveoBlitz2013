@@ -41,7 +41,7 @@ $("#search-bar").bind("input propertychange", function (evt) {
             if (doc.type == "artiste")
               formattedArtists.push('<div class="artist"><img src="http://ec2-23-20-62-1.compute-1.amazonaws.com:8080/BlitzDataWebService/images/' + doc.id + '" class="thumbnail"><div class="artist-info"><div class="title"><strong>' + doc.name + '</strong></div><div class="description">' + doc.text + '</div></div></div>');
             else
-              formattedAlbums.push('<div class="artist"><img src="http://ec2-23-20-62-1.compute-1.amazonaws.com:8080/BlitzDataWebService/images/' + doc.id + '" class="thumbnail"><div class="artist-info"><div class="title"><strong>Artiste</strong> | Album</div><div class="description">Description</div></div></div>');
+              formattedAlbums.push('<div class="artist"><img src="http://ec2-23-20-62-1.compute-1.amazonaws.com:8080/BlitzDataWebService/images/' + doc.id + '" class="thumbnail"><div class="artist-info"><div class="title"><strong>' + doc.artists + '</strong> | ' + doc.name + '</div><div class="description">' + doc.text + '</div></div></div>');
           });
 
           $("#artists").html(formattedArtists.join(""));
