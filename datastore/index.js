@@ -1,14 +1,14 @@
-var restler  = require('restler');
+var rest  = require('restler');
 
 //Initialize the REST crawler
 CrawlerModel = rest.service(function() {}, {
-  baseURL: 'http://ec2-23-20-62-1.compute-1.amazonaws.com:8080',
+  baseURL: 'http://ec2-23-20-62-1.compute-1.amazonaws.com:8080/BlitzDataWebService',
 }, {
   start: function() {
     return this.get("/evaluationRun/start?runId=A")
   },
   stop: function() {
-    return this.get("/BlitzDataWebService/evaluationRun/stop");
+    return this.get("/evaluationRun/stop");
   }
 });
 
@@ -25,7 +25,23 @@ module.exports = function(config) {
     crawler.start();
 
     //On crawl ca staffaire la !!!
-    
+    var documents;
+
+    var size = 100;
+    var page = 0;
+    var lastPage = false;
+
+    var artists;
+    var albums;
+    var documents;
+
+    while (!lastPage)
+    {
+      crawler.get("/artists?size=" + size + "&page=" + page, {parser: parsers.json}).on('complete', function(data) {
+        lastPage = data.lastPage;
+        console.dir(data);
+      });
+    }
 
     //Call the STOP command
     crawler.stop();
