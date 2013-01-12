@@ -16,6 +16,11 @@ input:-moz-placeholder {
 
 .container {
   width: 900px;
+  padding-bottom: 50px;
+}
+
+h2 {
+  margin-top: 10px;
 }
 
 #headline {
@@ -34,8 +39,16 @@ input:-moz-placeholder {
   display: block;
 }
 
+.thumbnail {
+  margin: 0;
+  float: left;
+  width: 115px;
+}
+
 #results {
   display: none;
+  width: 850px;
+  margin: 0 auto;
 }
 
 #search-container {
@@ -46,6 +59,26 @@ input:-moz-placeholder {
   transition: all 0.2s ease-in-out;
 }
 
+#artists {
+  margin: 0 auto;
+  width: 850px;
+}
+
 .artist {
+  overflow: auto;
+  font-size: 16px;
+  margin-top: 20px;
+}
+
+.artist-info {
   float: left;
+  width: 570px;
+  margin-left: 15px;
+  margin-top: 10px;
+  font-size: 18px;
+}
+
+.title {
+  font-size: 25px;
+  margin-bottom: 5px;
 }

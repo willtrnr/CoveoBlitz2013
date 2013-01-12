@@ -237,18 +237,30 @@ module.exports = function(config) {
       results: []
     };
     for (var album in albums) {
-      results.results.push({id: albums[album]});
+      var alb = self.documents[albums[album]];
+      results.results.push({id: albums[album], type: "album",
+        text: alb.text || "Aucune description.",
+        name: alb.name ? alb.name[0] : "Nom indisponible.",
+        artists: self.getUIArtists(alb.artists).substring(0,197) + '...'});
     }
     for (var artist in artists) {
-      results.results.push({id: artists[artist]});
+      var art = self.documents[artists[artist]];
+      results.results.push({id: artists[artist], type: "artiste",
+        text: art.text || "Biographie indisponible.",
+        name: art.name ? art.name[0] : "Nom indisponible."});
     }
 
-    /*for (var alb in albums) {
-      var facets = self.getFacets(self.documents[albums[alb]]);
-
-    }*/
-
     return results;
+  };
+  this.getUIArtists = function(artists) {
+    var str = "";
+    if (artists.length > 0)
+      str.push(artists[0]);
+    for (var i in artists) {
+      if (i > 0)
+        str.push(', ' + artists[i]);
+    }
+    return str;
   };
   this.docContainsAllTerms = function(id, terms, tokens) {
     for (var i in tokens) {
