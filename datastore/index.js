@@ -242,7 +242,7 @@ module.exports = function(config) {
       results.results.push({id: albums[album], type: "album",
         text: alb.text || "Aucune description.",
         name: alb.name ? alb.name[0] : "Nom indisponible.",
-        artists: self.getUIArtists(alb.artists).substring(0,197) + '...'});
+        artists: self.getUIArtists(alb.artists).substr(0,197) + '...'});
     }
     for (var artist in artists) {
       var art = self.documents[artists[artist]];
