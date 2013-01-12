@@ -197,7 +197,8 @@ module.exports = function(config) {
     }*/
   };
   this.search = function(query) {
-    var isAnd = true;
+    var isAnd = !query.toString().contains('OR');
+    query.replace('OR', '');
     var tokens = self.tokenize(query);
     var albums = [];
     var artists = [];
