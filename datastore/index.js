@@ -1,4 +1,5 @@
 var Lateral = require('lateral');
+var Join = require('join');
 var http = require('http');
 http.globalAgent.maxSockets = 500;
 
@@ -19,7 +20,7 @@ function getJSON(url, callback) {
         if (callback) callback(JSON.parse(data));
       } catch (ex) {
         console.log(ex);
-        if (callback) callback({});
+        getJSON(url, callback);
       }
     });
   }).end('');
@@ -30,14 +31,16 @@ module.exports = function(config) {
 
   this.config = config;
 
-  this.page = 0;
+  this.pageArtist = 0;
+  this.pageAlbum = 0;
 
   this.documents = {};
   this.artists = {};
   this.albums = {};
 
   //this.facets = [];
-  this.tocrawl = [];
+  this.crawlArtists = [];
+  this.crawlAlbums = [];
 
   this.crawlPoolArtist = Lateral.create(function(complete, item, i) {
     getJSON('/artists/' + item.id, function(data) {
@@ -51,7 +54,7 @@ module.exports = function(config) {
       */
       complete();
     });
-  }, 50);
+  }, 100);
 
   this.crawlPoolAlbum = Lateral.create(function(complete, item, i) {
     getJSON('/albums/' + item.id, function(data) {
@@ -65,41 +68,48 @@ module.exports = function(config) {
       */
       complete();
     });
-  }, 50);
+  }, 100);
 
-  this.crawlAlbumPage = function() {
-    getJSON('/albums?size=100&page=' + self.page, function(data) {
-      self.page++;
-      self.crawlPoolAlbum.add(data.content).when(function() {
-        if (!data.lastPage) {
-          self.crawlAlbumPage();
-        } else {
-          getJSON('/evaluationRun/stop', console.log);
-          console.log(self.facets);
-        }
-      });
-    });
-  };
+  this.doneCrawl = Join.create();
+  this.doneAlbums = this.doneCrawl.add();
+  this.doneArtists = this.doneCrawl.add();
 
   this.crawlArtistPage = function() {
-    getJSON('/artists?size=100&page=' + self.page, function(data) {
-      self.page++;
-      self.crawlPoolArtist.add(data.content).when(function() {
-        if (!data.lastPage) {
-          self.crawlArtistPage();
-        } else {
-          self.page = 0;
-          self.crawlAlbumPage();
-        }
-      });
+    getJSON('/artists?size=100&page=' + self.pageArtist, function(data) {
+      self.pageArtist++;
+      self.crawlArtists = self.crawlArtists.concat(data.content);
+      if (!data.lastPage) {
+        self.crawlArtistPage();
+      } else {
+        self.crawlPoolArtist.add(self.crawlArtists).when(self.doneArtists);
+      }
     });
   };
+
+  this.crawlAlbumPage = function() {
+    getJSON('/albums?size=100&page=' + self.pageAlbum, function(data) {
+      self.pageAlbum++;
+      self.crawlAlbums = self.crawlAlbums.concat(data.content);
+      if (!data.lastPage) {
+        self.crawlAlbumPage();
+      } else {
+        self.crawlPoolAlbum.add(self.crawlAlbums).when(self.doneAlbums);
+      }
+    });
+  };
+
+  this.doneCrawl.when(function() {
+    getJSON('/evaluationRun/stop', function(data) {
+      console.log("Stop crawling! ", data.documentsCrawled, "/", data.documentsAvailable);
+    });
+  });
 
   this.crawl = function() {
     //Call the START command
+    console.log("Start crawling!");
     getJSON('/evaluationRun/start?runId=Run1test', function(data) {
-      console.log(data);
       self.crawlArtistPage();
+      self.crawlAlbumPage();
     });
   };
 
