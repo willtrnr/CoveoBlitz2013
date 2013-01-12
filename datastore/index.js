@@ -31,7 +31,7 @@ module.exports = function(config) {
 
   this.config = config;
 
-  this.pageArtist = 250;
+  this.pageArtist = 0;
   this.pageAlbum = 250;
 
   this.documents = {};
