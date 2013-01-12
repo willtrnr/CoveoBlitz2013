@@ -5,7 +5,7 @@ http.globalAgent.maxSockets = 1000;
 
 function getJSON(url, callback) {
   console.log("Getting " + url);
-  http.request({
+  var r = http.request({
       hostname: 'ec2-23-20-62-1.compute-1.amazonaws.com',
       port: 8080,
       method: 'GET',
@@ -23,7 +23,11 @@ function getJSON(url, callback) {
         getJSON(url, callback);
       }
     });
-  }).end('');
+  });
+  r.on('error', function() {
+    getJSON('/evaluationRun/stop');
+  });
+  r.end();
 }
 
 module.exports = function(config) {
