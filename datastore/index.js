@@ -75,9 +75,24 @@ module.exports = function(config) {
       }
     }
   };
+  this.indexAlbum = function(album) {
+    var value = this.getAlbumString(album);
+    var tokens = this.tokenize(value);
+
+    for (var i in tokens) {
+      var token = tokens[i];
+        if (token) {
+        if (!this.terms.albums[token]) this.terms.albums[token] = {};
+        if (!this.terms.albums[token][album.id]) this.terms.albums[token][album.id] = 1;
+        else this.terms.albums[token][album.id]++;
+      }
+    }
+  };
   this.getArtistString = function(artist) {
-    return this.concatArraysIntoString([artist.name, artist.origin, artist.genres, artist.labels,
-      artist.group_names, artist.instruments_played]) + ' ' + artist.text;
+    return this.concatArraysIntoString([artist.name, artist.origin, artist.genres, artist.labels]) + ' ' + artist.text;
+  };
+  this.getAlbumsString = function(album) {
+    return this.concatArraysIntoString([album.name, album.track_names, album.release_date]);
   };
   this.concatArraysIntoString = function(arr) {
     var str = "";
