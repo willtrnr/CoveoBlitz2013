@@ -1,7 +1,7 @@
 var Lateral = require('lateral');
 var Join = require('join');
 var http = require('http');
-http.globalAgent.maxSockets = 500;
+http.globalAgent.maxSockets = 1000;
 
 function getJSON(url, callback) {
   console.log("Getting " + url);
@@ -32,7 +32,7 @@ module.exports = function(config) {
   this.config = config;
 
   this.pageArtist = 0;
-  this.pageAlbum = 0;
+  this.pageAlbum = 250;
 
   this.documents = {};
   this.artists = {};
@@ -107,7 +107,7 @@ module.exports = function(config) {
   this.crawl = function() {
     //Call the START command
     console.log("Start crawling!");
-    getJSON('/evaluationRun/start?runId=Run1test', function(data) {
+    getJSON('/evaluationRun/start?runId=' + self.config.runId, function(data) {
       self.crawlArtistPage();
       self.crawlAlbumPage();
     });
@@ -233,11 +233,12 @@ module.exports = function(config) {
       },
       results: []
     };
-
-    /*for (var alb in albums) {
-      var facets = self.getFacets(self.documents[albums[alb]]);
-
-    }*/
+    for (var album in albums) {
+      results.results.push({id: albums[album]});
+    }
+    for (var artist in artists) {
+      results.results.push({id: artists[artist]});
+    }
 
     return results;
   };
