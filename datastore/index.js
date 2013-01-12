@@ -131,10 +131,24 @@ module.exports = function(config) {
       }
     }
 
-    return {
-      albums: albums,
-      artists: artists
+    var results = {
+      facets: {
+        type: {
+          albums: albums.length,
+          artists: artists.length
+        }
+      },
+      results: []
     };
+
+    for (var album in albums) {
+      results.push({id: albums[album]});
+    }
+    for (var artist in artists) {
+      results.push({id: artists[artist]});
+    }
+
+    return results;
   };
   this.addDistinct = function(arr, add) {
     for (var a in add) {
