@@ -39,12 +39,14 @@ $("#search-bar").bind("input propertychange", function (evt) {
 
           data.results.forEach(function(doc) {
             if (doc.type == "artiste")
-              formattedArtists.push('<div class="artist"><img src="http://ec2-23-20-62-1.compute-1.amazonaws.com:8080/BlitzDataWebService/images/' + doc.id + '" class="thumbnail"><div class="artist-info"><div class="title"><strong>Artiste</strong> | Album</div><div class="description">Description</div></div></div>');
+              formattedArtists.push('<div class="artist"><img src="http://ec2-23-20-62-1.compute-1.amazonaws.com:8080/BlitzDataWebService/images/' + doc.id + '" class="thumbnail"><div class="artist-info"><div class="title"><strong>' + doc.name + '</strong></div><div class="description">' + doc.text + '</div></div></div>');
             else
               formattedAlbums.push('<div class="artist"><img src="http://ec2-23-20-62-1.compute-1.amazonaws.com:8080/BlitzDataWebService/images/' + doc.id + '" class="thumbnail"><div class="artist-info"><div class="title"><strong>Artiste</strong> | Album</div><div class="description">Description</div></div></div>');
           });
 
           $("#artists").html(formattedArtists.join(""));
+          $("#albums").html(formattedAlbums.join(""));
+
           $("#results").fadeIn();
         });
       }

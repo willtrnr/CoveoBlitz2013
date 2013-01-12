@@ -16,6 +16,11 @@ input:-moz-placeholder {
 
 .container {
   width: 900px;
+  padding-bottom: 50px;
+}
+
+h2 {
+  margin-top: 10px;
 }
 
 #headline {
