@@ -1,50 +1,88 @@
-var rest  = require('restler');
+var Lateral = require('lateral');
+var http = require('http');
+http.globalAgent.maxSockets = 500;
 
-//Initialize the REST crawler
-CrawlerModel = rest.service(function() {}, {
-  baseURL: 'http://ec2-23-20-62-1.compute-1.amazonaws.com:8080/BlitzDataWebService',
-}, {
-  start: function() {
-    return this.get("/evaluationRun/start?runId=A")
-  },
-  stop: function() {
-    return this.get("/evaluationRun/stop");
-  }
-});
-
-var crawler = new CrawlerModel();
-
+function getJSON(url, callback) {
+  console.log("Getting " + url);
+  http.request({
+      hostname: 'ec2-23-20-62-1.compute-1.amazonaws.com',
+      port: 8080,
+      method: 'GET',
+      path: url
+    }, function(res) {
+    var data = '';
+    res.on('data', function(chunk) {
+      data += chunk;
+    });
+    res.on('end', function() {
+      if (callback) callback(JSON.parse(data));
+    });
+  }).end('');
+}
 
 module.exports = function(config) {
   var self = this;
 
   this.config = config;
 
-  this.crawl = function() {
-    //Call the START command
-    crawler.start();
+  this.documents = {};
 
-    //On crawl ca staffaire la !!!
-    var documents;
+  this.page = 0;
 
-    var size = 100;
-    var page = 0;
-    var lastPage = false;
+  this.artists = {};
+  this.albums = {};
 
-    var artists;
-    var albums;
-    var documents;
+  this.crawlPoolArtist = Lateral.create(function(complete, item, i) {
+    console.log(item);
+    getJSON('/BlitzDataWebService/artists/' + item.id, function(data) {
+      console.log(data);
+      complete();
+    });
+  }, 25);
 
-    while (!lastPage)
-    {
-      crawler.get("/artists?size=" + size + "&page=" + page, {parser: parsers.json}).on('complete', function(data) {
-        lastPage = data.lastPage;
-        console.dir(data);
+  this.crawlPoolAlabum = Lateral.create(function(complete, item, i) {
+    console.log(item);
+    getJSON('/BlitzDataWebService/album/' + item.id, function(data) {
+      console.log(data);
+      complete();
+    });
+  }, 25);
+
+  this.crawlAlbumPage = function() {
+    getJSON('/BlitzDataWebService/artists?size=100&page=' + self.page, function(data) {
+      console.log(data);
+      self.page++;
+      self.crawlPoolAlabum.add(data.content).when(function() {
+        if (!data.lastPage) {
+          self.crawlAlbumPage();
+        } else {
+          getJSON('/BlitzDataWebService/evaluationRun/stop', console.log);
+        }
       });
-    }
+    });
+  };
 
-    //Call the STOP command
-    crawler.stop();
+  this.crawlArtistPage = function() {
+    getJSON('/BlitzDataWebService/artists?size=100&page=' + self.page, function(data) {
+      console.log(data);
+      self.page++;
+      self.crawlPoolArtist.add(data.content).when(function() {
+        if (!data.lastPage) {
+          self.crawlArtistPage();
+        } else {
+          self.page = 0;
+          self.crawlAlbumPage();
+        }
+      });
+    });
+  };
+
+  this.crawl = function() {
+    console.log("Crawling");
+    //Call the START command
+    getJSON('/BlitzDataWebService/evaluationRun/start?runId=Peewee', function(data) {
+      self.crawlArtistPage();
+    });
   };
 
   /*
