@@ -197,7 +197,7 @@ module.exports = function(config) {
     }*/
   };
   this.search = function(query) {
-    var isAnd = !query.toString().contains('OR');
+    var isAnd = query.indexOf('OR') < 0;
     query.replace('OR', '');
     var tokens = self.tokenize(query);
     var albums = [];
