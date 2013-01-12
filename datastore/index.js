@@ -196,10 +196,28 @@ module.exports = function(config) {
     }
   };
   this.getArtistString = function(artist) {
-    return this.concatArraysIntoString([artist.name, artist.origin, artist.genres, artist.labels]) + ' ' + artist.text;
+    return this.concatArraysIntoString(this.getFacetsValues(artist).concat([artist.name])) + ' ' + artist.text;
   };
   this.getAlbumString = function(album) {
-    return this.concatArraysIntoString([album.name, album.track_names, album.release_date]);
+    return this.concatArraysIntoString(this.getFacetsValues(album).concat([album.name]));
+  };
+  this.getFacetsValues = function(obj) {
+    var facets = getFacets(obj);
+    var values = [];
+    for (var f in facets) {
+      values.push(obj[facets[f]]);
+    }
+    return values;
+  };
+  this.getFacets = function(obj) {
+    var facets = [];
+    var keys = Object.keys(obj);
+    for (var i in keys) {
+      var prop = keys[i];
+      if (prop !== "name" && prop !== "text" && prop !== "id")
+        facets.push(prop);
+    }
+    return facets;
   };
   this.concatArraysIntoString = function(arr) {
     var str = "";
