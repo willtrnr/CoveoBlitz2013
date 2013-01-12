@@ -42,14 +42,14 @@ module.exports = function(config) {
 
   this.crawlPoolAlabum = Lateral.create(function(complete, item, i) {
     console.log(item);
-    getJSON('/BlitzDataWebService/album/' + item.id, function(data) {
+    getJSON('/BlitzDataWebService/albums/' + item.id, function(data) {
       console.log(data);
       complete();
     });
   }, 25);
 
   this.crawlAlbumPage = function() {
-    getJSON('/BlitzDataWebService/artists?size=100&page=' + self.page, function(data) {
+    getJSON('/BlitzDataWebService/albums?size=100&page=' + self.page, function(data) {
       console.log(data);
       self.page++;
       self.crawlPoolAlabum.add(data.content).when(function() {
@@ -80,7 +80,7 @@ module.exports = function(config) {
   this.crawl = function() {
     console.log("Crawling");
     //Call the START command
-    getJSON('/BlitzDataWebService/evaluationRun/start?runId=A', function(data) {
+    getJSON('/BlitzDataWebService/evaluationRun/start?runId=Peewee', function(data) {
       self.crawlArtistPage();
     });
   };
