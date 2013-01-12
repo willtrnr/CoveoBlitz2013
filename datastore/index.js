@@ -5,25 +5,30 @@ http.globalAgent.maxSockets = 5000;
 
 function getJSON(url, callback) {
   console.log("Getting " + url);
-  http.request({
-      hostname: 'ec2-23-20-62-1.compute-1.amazonaws.com',
-      port: 8080,
-      method: 'GET',
-      path: '/BlitzDataWebService' + url
-    }, function(res) {
-    var data = '';
-    res.on('data', function(chunk) {
-      data += chunk;
-    });
-    res.on('end', function() {
-      try {
-        if (callback) callback(JSON.parse(data));
-      } catch (ex) {
-        console.log(ex);
-        getJSON(url, callback);
-      }
-    });
-  }).end('');
+  try {
+    http.request({
+        hostname: 'ec2-23-20-62-1.compute-1.amazonaws.com',
+        port: 8080,
+        method: 'GET',
+        path: '/BlitzDataWebService' + url
+      }, function(res) {
+      var data = '';
+      res.on('data', function(chunk) {
+        data += chunk;
+      });
+      res.on('end', function() {
+        try {
+          if (callback) callback(JSON.parse(data));
+        } catch (ex) {
+          console.log(ex);
+          getJSON(url, callback);
+        }
+      });
+    }).end('');
+  } catch (ex) {
+    console.log(ex);
+    getJSON(url, callback);
+  }
 }
 
 module.exports = function(config) {
