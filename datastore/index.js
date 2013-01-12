@@ -197,7 +197,8 @@ module.exports = function(config) {
     }*/
   };
   this.search = function(query) {
-    var isAnd = true;
+    var isAnd = !query.toString().contains('OR');
+    query.replace('OR', '');
     var tokens = self.tokenize(query);
     var albums = [];
     var artists = [];
@@ -255,10 +256,10 @@ module.exports = function(config) {
   this.getUIArtists = function(artists) {
     var str = "";
     if (artists.length > 0)
-      str.push(artists[0]);
+      str += artists[0];
     for (var i in artists) {
       if (i > 0)
-        str.push(', ' + artists[i]);
+        str += ', ' + artists[i];
     }
     return str;
   };
