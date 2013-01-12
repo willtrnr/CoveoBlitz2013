@@ -1,34 +1,29 @@
 var Lateral = require('lateral');
 var Join = require('join');
 var http = require('http');
-http.globalAgent.maxSockets = 5000;
+http.globalAgent.maxSockets = 1000;
 
 function getJSON(url, callback) {
   console.log("Getting " + url);
-  try {
-    http.request({
-        hostname: 'ec2-23-20-62-1.compute-1.amazonaws.com',
-        port: 8080,
-        method: 'GET',
-        path: '/BlitzDataWebService' + url
-      }, function(res) {
-      var data = '';
-      res.on('data', function(chunk) {
-        data += chunk;
-      });
-      res.on('end', function() {
-        try {
-          if (callback) callback(JSON.parse(data));
-        } catch (ex) {
-          console.log(ex);
-          getJSON(url, callback);
-        }
-      });
-    }).end('');
-  } catch (ex) {
-    console.log(ex);
-    getJSON(url, callback);
-  }
+  http.request({
+      hostname: 'ec2-23-20-62-1.compute-1.amazonaws.com',
+      port: 8080,
+      method: 'GET',
+      path: '/BlitzDataWebService' + url
+    }, function(res) {
+    var data = '';
+    res.on('data', function(chunk) {
+      data += chunk;
+    });
+    res.on('end', function() {
+      try {
+        if (callback) callback(JSON.parse(data));
+      } catch (ex) {
+        console.log(ex);
+        getJSON(url, callback);
+      }
+    });
+  }).end('');
 }
 
 module.exports = function(config) {
@@ -36,8 +31,8 @@ module.exports = function(config) {
 
   this.config = config;
 
-  this.pageArtist = 0;
-  this.pageAlbum = 0;
+  this.pageArtist = 250;
+  this.pageAlbum = 250;
 
   this.documents = {};
   this.artists = {};
@@ -59,7 +54,7 @@ module.exports = function(config) {
       */
       complete();
     });
-  }, 500);
+  }, 100);
 
   this.crawlPoolAlbum = Lateral.create(function(complete, item, i) {
     getJSON('/albums/' + item.id, function(data) {
@@ -73,7 +68,7 @@ module.exports = function(config) {
       */
       complete();
     });
-  }, 500);
+  }, 100);
 
   this.doneCrawl = Join.create();
   this.doneAlbums = this.doneCrawl.add();
