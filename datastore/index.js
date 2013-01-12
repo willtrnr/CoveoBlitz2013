@@ -112,36 +112,28 @@ module.exports = function(config) {
     for (var i in tokens) {
       var token = tokens[i];
       if (token) {
-        if (terms.albums[token].length > 0)
-          albums.push(terms.albums[token]);
-        if (terms.artists[token].length > 0)
-          artists.push(terms.artists[token]);
+        if (this.terms.albums[token])
+          this.addDistinct(albums, this.terms.albums[token]);
+        if (this.terms.artists[token])
+          this.addDistinct(artists, this.terms.artists[token]);
       }
     }
-
-    albums = this.distinct(albums);
-    artists = this.distinct(artists);
 
     return {
       albums: albums,
       artists: artists
     };
   };
-  this.distinct = function(arr) {
-    var u = {}, a = [];
-   for(var i = 0, l = this.length; i < l; ++i){
-      if(u.hasOwnProperty(this[i])) {
-         continue;
-      }
-      a.push(this[i]);
-      u[this[i]] = 1;
-   }
-   return a;
+  this.addDistinct = function(arr, add) {
+    for (var a in add) {
+      if (arr.indexOf(a) < 0)
+        arr.push(a);
+    }
   };
   this.getArtistString = function(artist) {
     return this.concatArraysIntoString([artist.name, artist.origin, artist.genres, artist.labels]) + ' ' + artist.text;
   };
-  this.getAlbumsString = function(album) {
+  this.getAlbumString = function(album) {
     return this.concatArraysIntoString([album.name, album.track_names, album.release_date]);
   };
   this.concatArraysIntoString = function(arr) {
