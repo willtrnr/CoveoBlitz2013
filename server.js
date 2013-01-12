@@ -5,7 +5,7 @@ var express  = require('express'),
     path     = require('path');
 
 var config   = require('./config');
-var db       = require('./datastore')(config);
+var db       = new require('./datastore')(config);
 var app      = express();
 var sessions = new express.session.MemoryStore(); // Must change for cluster-safe
 
@@ -46,3 +46,4 @@ http.createServer(app).listen(config.port || 3000, config.host || '0.0.0.0', fun
   console.log("Project " + config.title + " server listening on " + (config.host || '0.0.0.0') + ":" + (config.port || 3000));
 });
 
+db.crawl();
