@@ -34,8 +34,13 @@ input:-moz-placeholder {
   display: block;
 }
 
+.thumbnail {
+  margin: 0;
+  float: left;
+}
+
 #results {
-  display: none;
+  display: block;
 }
 
 #search-container {
@@ -46,6 +51,25 @@ input:-moz-placeholder {
   transition: all 0.2s ease-in-out;
 }
 
+#artists {
+  margin: 0 auto;
+  width: 750px;
+}
+
 .artist {
+  overflow: auto;
+  font-size: 16px;
+}
+
+.artist-info {
   float: left;
+  width: 570px;
+  margin-left: 15px;
+  margin-top: 10px;
+  font-size: 18px;
+}
+
+.title {
+  font-size: 25px;
+  margin-bottom: 5px;
 }
