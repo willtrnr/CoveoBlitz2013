@@ -33,6 +33,7 @@ $("#search-bar").bind("input propertychange", function (evt) {
         });
 
         $("#artists").html(formattedArtists.join(""));
+        $("#results").fadeIn();
       });
     }, 300));
 });
