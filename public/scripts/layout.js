@@ -6,7 +6,7 @@ $(document).ready(function() {
 
   $(window).resize(function() {
     if (!showingResults)
-      $("#search-container").animate({marginTop: $(window).height()/2 - $("#search-container").outerHeight()/2}, 200);
+      $("#search-container").css('margin-top', $(window).height()/2 - $("#search-container").outerHeight()/2);
   });
 });
 
@@ -24,16 +24,15 @@ $("#search-bar").bind("input propertychange", function (evt) {
       $.get('/api', requestData, function(data, textStatus, jqXHR) {
         //Move that search bar
         showingResults = true;
+        $("#search-container").css('margin-top', $(window).height()/2 - $("#search-container").outerHeight()/2);
 
-        $("#search-container").animate({marginTop: 50}, 200, function() {
-          var formattedArtists = [];
+        var formattedArtists = [];
 
-          data.results.forEach(function(doc) {
-            formattedArtists.push('<div class="artist"><img src="http://ec2-23-20-62-1.compute-1.amazonaws.com:8080/BlitzDataWebService/images/' + doc.id + '" class="thumbnail"><div class="title"></div></div class="description"></div></div>');
-          });
-
-          $("#artists").html(formattedArtists.join(""));
+        data.results.forEach(function(doc) {
+          formattedArtists.push('<div class="artist"><img src="http://ec2-23-20-62-1.compute-1.amazonaws.com:8080/BlitzDataWebService/images/' + doc.id + '" class="thumbnail"><div class="title"></div></div class="description"></div></div>');
         });
+
+        $("#artists").html(formattedArtists.join(""));
       });
     }, 300));
 });
