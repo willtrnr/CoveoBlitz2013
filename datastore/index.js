@@ -1,7 +1,7 @@
 var Lateral = require('lateral');
 var Join = require('join');
 var http = require('http');
-http.globalAgent.maxSockets = 500;
+http.globalAgent.maxSockets = 5000;
 
 function getJSON(url, callback) {
   console.log("Getting " + url);
@@ -54,7 +54,7 @@ module.exports = function(config) {
       */
       complete();
     });
-  }, 100);
+  }, 500);
 
   this.crawlPoolAlbum = Lateral.create(function(complete, item, i) {
     getJSON('/albums/' + item.id, function(data) {
@@ -68,7 +68,7 @@ module.exports = function(config) {
       */
       complete();
     });
-  }, 100);
+  }, 500);
 
   this.doneCrawl = Join.create();
   this.doneAlbums = this.doneCrawl.add();
