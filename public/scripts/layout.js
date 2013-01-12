@@ -21,6 +21,12 @@ $("#search-bar").bind("input propertychange", function (evt) {
         q: $("#search-bar").val()
       }
       //Call that AJAX
+      if ($("#search-bar").val().trim() == "")
+      {
+        $("#results").fadeOut();
+        $("#search-container").css('margin-top', $(window).height()/2 - $("#search-container").outerHeight()/2);
+        showingResults = false;
+      }
       $.get('/api', requestData, function(data, textStatus, jqXHR) {
         //Move that search bar
         showingResults = true;
@@ -35,5 +41,5 @@ $("#search-bar").bind("input propertychange", function (evt) {
         $("#artists").html(formattedArtists.join(""));
         $("#results").fadeIn();
       });
-    }, 300));
+    }, 500));
 });
