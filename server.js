@@ -4,6 +4,10 @@ var express  = require('express'),
     http     = require('http'),
     path     = require('path');
 
+process.on('error', function() {
+  console.log("KEEP CALM AND QUERY ON!");
+});
+
 var config   = require('./config');
 var db       = new (require('./datastore'))(config);
 var app      = express();

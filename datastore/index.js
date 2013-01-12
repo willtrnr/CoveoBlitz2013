@@ -8,14 +8,19 @@ function getJSON(url, callback) {
       hostname: 'ec2-23-20-62-1.compute-1.amazonaws.com',
       port: 8080,
       method: 'GET',
-      path: url
+      path: '/BlitzDataWebService' + url
     }, function(res) {
     var data = '';
     res.on('data', function(chunk) {
       data += chunk;
     });
     res.on('end', function() {
-      if (callback) callback(JSON.parse(data));
+      try {
+        if (callback) callback(JSON.parse(data));
+      } catch (ex) {
+        console.log(ex);
+        if (callback) callback({});
+      }
     });
   }).end('');
 }
@@ -25,46 +30,59 @@ module.exports = function(config) {
 
   this.config = config;
 
-  this.documents = {};
-
   this.page = 0;
 
+  this.documents = {};
   this.artists = {};
   this.albums = {};
 
-  this.crawlPoolArtist = Lateral.create(function(complete, item, i) {
-    console.log(item);
-    getJSON('/BlitzDataWebService/artists/' + item.id, function(data) {
-      console.log(data);
-      complete();
-    });
-  }, 25);
+  //this.facets = [];
+  this.tocrawl = [];
 
-  this.crawlPoolAlabum = Lateral.create(function(complete, item, i) {
-    console.log(item);
-    getJSON('/BlitzDataWebService/albums/' + item.id, function(data) {
-      console.log(data);
+  this.crawlPoolArtist = Lateral.create(function(complete, item, i) {
+    getJSON('/artists/' + item.id, function(data) {
+      self.documents[item.id] = data;
+      self.artists[item.id] = self.documents[item.id];
+      self.indexArtist(data);
+      /*
+      Object.keys(data).forEach(function(k) {
+        if (self.facets.indexOf(k) == -1) self.facets.push(k);
+      });
+      */
       complete();
     });
-  }, 25);
+  }, 50);
+
+  this.crawlPoolAlbum = Lateral.create(function(complete, item, i) {
+    getJSON('/albums/' + item.id, function(data) {
+      self.documents[item.id] = data;
+      self.albums[item.id] = self.documents[item.id];
+      self.indexAlbum(data);
+      /*
+      Object.keys(data).forEach(function(k) {
+        if (self.facets.indexOf(k) == -1) self.facets.push(k);
+      });
+      */
+      complete();
+    });
+  }, 50);
 
   this.crawlAlbumPage = function() {
-    getJSON('/BlitzDataWebService/albums?size=100&page=' + self.page, function(data) {
-      console.log(data);
+    getJSON('/albums?size=100&page=' + self.page, function(data) {
       self.page++;
-      self.crawlPoolAlabum.add(data.content).when(function() {
+      self.crawlPoolAlbum.add(data.content).when(function() {
         if (!data.lastPage) {
           self.crawlAlbumPage();
         } else {
-          getJSON('/BlitzDataWebService/evaluationRun/stop', console.log);
+          getJSON('/evaluationRun/stop', console.log);
+          console.log(self.facets);
         }
       });
     });
   };
 
   this.crawlArtistPage = function() {
-    getJSON('/BlitzDataWebService/artists?size=100&page=' + self.page, function(data) {
-      console.log(data);
+    getJSON('/artists?size=100&page=' + self.page, function(data) {
       self.page++;
       self.crawlPoolArtist.add(data.content).when(function() {
         if (!data.lastPage) {
@@ -78,9 +96,8 @@ module.exports = function(config) {
   };
 
   this.crawl = function() {
-    console.log("Crawling");
     //Call the START command
-    getJSON('/BlitzDataWebService/evaluationRun/start?runId=Run1test', function(data) {
+    getJSON('/evaluationRun/start?runId=Run1test', function(data) {
       console.log(data);
       self.crawlArtistPage();
     });
