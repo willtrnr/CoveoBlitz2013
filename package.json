@@ -23,7 +23,7 @@
     "connect-flash": "0.1.x",
     "express": "3.0.x",
     "consolidate": "0.5.x",
-    "jade": "0.27.x",
+    "ejs": "*",
     "futures": "*",
     "Array.prototype.forEachAsync": "*",
     "lateral": "*"
