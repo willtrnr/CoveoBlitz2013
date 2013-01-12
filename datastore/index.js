@@ -240,14 +240,14 @@ module.exports = function(config) {
     for (var album in albums) {
       var alb = self.documents[albums[album]];
       results.results.push({id: albums[album], type: "album",
-        text: alb.text || "Aucune description.",
+        text: alb.text.substr(0,197) + '...' || "Aucune description.",
         name: alb.name ? alb.name[0] : "Nom indisponible.",
-        artists: self.getUIArtists(alb.artists).substr(0,197) + '...'});
+        artists: self.getUIArtists(alb.artists)});
     }
     for (var artist in artists) {
       var art = self.documents[artists[artist]];
       results.results.push({id: artists[artist], type: "artiste",
-        text: art.text || "Biographie indisponible.",
+        text: art.text.substr(0,197) + '...' || "Biographie indisponible.",
         name: art.name ? art.name[0] : "Nom indisponible."});
     }
 
