@@ -37,6 +37,7 @@ input:-moz-placeholder {
 .thumbnail {
   margin: 0;
   float: left;
+  width: 115px;
 }
 
 #results {
@@ -59,6 +60,7 @@ input:-moz-placeholder {
 .artist {
   overflow: auto;
   font-size: 16px;
+  margin-top: 20px;
 }
 
 .artist-info {
