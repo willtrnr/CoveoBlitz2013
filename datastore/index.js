@@ -236,7 +236,8 @@ module.exports = function(config) {
     for (var album in albums) {
       results.results.push({id: albums[album], type: "album",
         text: albums[album].text || "Aucune description.",
-        name: albums[album].name ? albums[album].name[0] : "Nom indisponible."});
+        name: albums[album].name ? albums[album].name[0] : "Nom indisponible.",
+        artists: self.getUIArtists(albums[album].artists).substring(0,197) + '...'});
     }
     for (var artist in artists) {
       results.results.push({id: artists[artist], type: "artiste",
@@ -245,6 +246,16 @@ module.exports = function(config) {
     }
 
     return results;
+  };
+  this.getUIArtists = function(artists) {
+    var str = "";
+    if (artists.length > 0)
+      str.push(artists[0]);
+    for (var i in artists) {
+      if (i > 0)
+        str.push(', ' + artists[i]);
+    }
+    return str;
   };
   this.docContainsAllTerms = function(id, terms, tokens) {
     for (var i in tokens) {
