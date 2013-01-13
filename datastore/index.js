@@ -236,12 +236,12 @@ module.exports = function(config) {
     for (var album in albums) {
       results.results.push({id: albums[album], type: "album",
         text: albums[album].text || "Aucune description.",
-        name: albums[album].name ? albums[album][0] : "Nom indisponible."});
+        name: albums[album].name ? albums[album].name[0] : "Nom indisponible."});
     }
     for (var artist in artists) {
       results.results.push({id: artists[artist], type: "artiste",
         text: artists[artist].text || "Biographie indisponible.",
-        name: albums[album].name ? artists[artist][0] : "Nom indisponible."});
+        name: artists[artist].name ? artists[artist].name[0] : "Nom indisponible."});
     }
 
     return results;
