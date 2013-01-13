@@ -234,15 +234,17 @@ module.exports = function(config) {
       results: []
     };
     for (var album in albums) {
+      var alb = self.documents[albums[album]];
       results.results.push({id: albums[album], type: "album",
-        text: albums[album].text || "Aucune description.",
-        name: albums[album].name ? albums[album].name[0] : "Nom indisponible.",
-        artists: self.getUIArtists(albums[album].artists).substring(0,197) + '...'});
+        text: alb.text || "Aucune description.",
+        name: alb.name ? alb.name[0] : "Nom indisponible.",
+        artists: self.getUIArtists(alb.artists).substring(0,197) + '...'});
     }
     for (var artist in artists) {
+      var art = self.documents[artists[artist]];
       results.results.push({id: artists[artist], type: "artiste",
-        text: artists[artist].text || "Biographie indisponible.",
-        name: artists[artist].name ? artists[artist].name[0] : "Nom indisponible."});
+        text: art.text || "Biographie indisponible.",
+        name: art.name ? art.name[0] : "Nom indisponible."});
     }
 
     return results;
