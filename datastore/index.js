@@ -32,7 +32,7 @@ module.exports = function(config) {
   this.config = config;
 
   this.pageArtist = 0;
-  this.pageAlbum = 250;
+  this.pageAlbum = 0;
 
   this.documents = {};
   this.artists = {};

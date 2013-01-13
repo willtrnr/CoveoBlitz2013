@@ -41,7 +41,9 @@ input:-moz-placeholder {
 }
 
 #results {
-  display: block;
+  display: none;
+  width: 850px;
+  margin: 0 auto;
 }
 
 #search-container {
@@ -54,7 +56,7 @@ input:-moz-placeholder {
 
 #artists {
   margin: 0 auto;
-  width: 750px;
+  width: 850px;
 }
 
 .artist {
